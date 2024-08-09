@@ -1,15 +1,15 @@
+
 {
   "name": "server",
-  "description": "",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-  "test": "echo \"Error: no test specified\" && exit 1",
-  "dev": "ts-node-dev --respawn --transpile-only server.ts"
-},
-
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts"
+  },
   "author": "PRANJAL SHUKLA",
   "license": "ISC",
+  "description": " ",
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
