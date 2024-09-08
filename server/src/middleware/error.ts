@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import ErrorHandle from "../utils/ErrorHandle";
 
-export default errorMiddleware = (
+export const errorMiddleware = (
   err: any,
   req: Request,
   res: Response,
