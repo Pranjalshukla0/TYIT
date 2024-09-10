@@ -13,6 +13,26 @@ interface ITokenOptions {
   secure?: boolean;
 }
 
+// Parse environment variables or use default expiration values
+  const accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE || "300", 10);
+const refreshTokenExpire = parseInt(process.env.REFRESH_TOKEN_EXPIRE || "1200", 10);
+
+// Options for the access token cookie
+ export const accessTokenOptions: ITokenOptions = {
+  expires: new Date(Date.now() + accessTokenExpire *60*60* 1000),
+  maxAge: accessTokenExpire *60*60* 1000,
+  httpOnly: true,
+  sameSite: "lax",
+};
+
+// Options for the refresh token cookie
+ export const refreshTokenOptions: ITokenOptions = {
+  expires: new Date(Date.now() + refreshTokenExpire *24*60*60* 1000),
+  maxAge: refreshTokenExpire *24*60*60* 1000,
+  httpOnly: true,
+  sameSite: "lax",
+};
+
 // Function to send tokens in response with cookies
 export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   const accessToken = user.SignAccessToken();  // Generate access token
@@ -29,26 +49,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
     return res.status(500).json({ success: false, message: "User ID is missing" });
   }
 
-  // Parse environment variables or use default expiration values
-  const accessTokenExpire = parseInt(process.env.ACCESS_TOKEN_EXPIRE || "300", 10);
-  const refreshTokenExpire = parseInt(process.env.REFRESH_TOKEN_EXPIRE || "1200", 10);
-
-  // Options for the access token cookie
-  const accessTokenOptions: ITokenOptions = {
-    expires: new Date(Date.now() + accessTokenExpire * 1000),
-    maxAge: accessTokenExpire * 1000,
-    httpOnly: true,
-    sameSite: "lax",
-  };
-
-  // Options for the refresh token cookie
-  const refreshTokenOptions: ITokenOptions = {
-    expires: new Date(Date.now() + refreshTokenExpire * 1000),
-    maxAge: refreshTokenExpire * 1000,
-    httpOnly: true,
-    sameSite: "lax",
-  };
-
+  
   // Ensure cookies are secure in production environment
   if (process.env.NODE_ENV === "production") {
     accessTokenOptions.secure = true;
