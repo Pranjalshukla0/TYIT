@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>KnowledgeHub Order Confirmation</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      padding: 20px;
+    }
+    .message-sm {
+      text-align: center;
+      color: #0044cc;
+      margin-bottom: 20px;
+    }
+    .message-sm h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+    .course-info {
+      margin-bottom: 20px;
+    }
+    .course-info h2 {
+      font-size: 18px;
+      color: #0044cc;
+    }
+    .order-table,
+    .summary-table {
+      width: 100%;
+      margin: 10px 0;
+      border-collapse: collapse;
+    }
+    .order-table th,
+    .order-table td,
+    .summary-table td {
+      padding: 10px;
+      border: 1px solid #e0e0e0;
+      text-align: left;
+    }
+    .order-table th {
+      background-color: #0044cc;
+      color: #ffffff;
+      font-weight: bold;
+    }
+    .summary-table td {
+      text-align: right;
+      font-weight: bold;
+    }
+    .total-row {
+      color: #0044cc;
+      font-size: 16px;
+    }
+    .footer {
+      text-align: center;
+      padding-top: 15px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="message-sm">
+      <h1>Your KnowledgeHub Order is Confirmed!</h1>
+      <p>We're just as excited as you are to start this learning journey with you.</p>
+    </div>
+
+    <div class="course-info">
+      <h2>Order Summary</h2>
+      <table class="order-table">
+        <tr>
+          <td><strong>Order #</strong>:</td>
+          <td><%= order._id %></td>
+        </tr>
+        <tr>
+          <td><strong>Order Date</strong>:</td>
+          <td><%= order.date %></td>
+        </tr>
+      </table>
+    </div>
+
+    <table class="order-table">
+      <tr>
+        <th>Item</th>
+        <th>Quantity</th>
+        <th>Cost</th>
+      </tr>
+      <tr>
+        <td><%= order.name %></td>
+        <td>1</td>
+        <td><%= order.price %></td>
+      </tr>
+    </table>
+
+    <table class="summary-table">
+      <tr>
+        <td>Subtotal:</td>
+        <td><%= order.price %></td>
+      </tr>
+      <tr class="total-row">
+        <td>Total:</td>
+        <td><%= order.price %></td>
+      </tr>
+    </table>
+
+    <div class="footer">
+      <p>Thank you for choosing KnowledgeHub!</p>
+      <p>If you have any questions, please reach out to our support team at support@knowledgehub.com.</p>
+      <p>Happy Learning!</p>
+    </div>
+  </div>
+</body>
+</html>
