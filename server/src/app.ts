@@ -19,7 +19,8 @@ app.use(cookieParser());
 
 // CORS => Cross-Origin Resource Sharing
 app.use(cors({
-    origin: process.env.ORIGIN 
+    origin: ['http://localhost:3000'],
+    credentials:true,
 }));
 //routes
 app.use("/api/v1",userRouter,orderRouter,courseRouter,notificationRoute,analyticsRouter,LayoutRouter);

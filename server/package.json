@@ -10,6 +10,9 @@
   "license": "ISC",
   "description": " ",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@reduxjs/toolkit": "^2.5.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
@@ -23,12 +26,18 @@
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
+    "formik": "^2.4.6",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
+    "react-hot-toast": "^2.4.1",
+    "react-redux": "^9.2.0",
+    "toaster": "^0.1.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@types/ejs": "^3.1.5",

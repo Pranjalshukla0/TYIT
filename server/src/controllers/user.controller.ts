@@ -305,7 +305,7 @@ interface IUpdateUserInfo {
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email } = req.body as IUpdateUserInfo;
+      const { name } = req.body as IUpdateUserInfo;
       const userId = req.user?._id;
 
       if (!userId) {
@@ -318,16 +318,9 @@ export const updateUserInfo = CatchAsyncError(
         return next(new ErrorHandle("User not found", 404));
       }
 
-      if (email) {
-        const isEmailExist = await userModel.findOne({ email });
+      
 
-        if (isEmailExist) {
-          return next(new ErrorHandle("Email already exists", 400));
-        }
-
-        user.email = email;
-      }
-
+        
       if (name) {
         user.name = name;
       }
@@ -396,7 +389,7 @@ export const updateProfilePicture = CatchAsyncError(
       const userId = req.user?._id as string;
       const user = await userModel.findById(userId);
 
-      if (!user) {
+      if (!userId) {
         return next(new ErrorHandle("User not found", 404));
       }
 
@@ -477,7 +470,7 @@ export const deleteUser = CatchAsyncError(
       await redis.del(id);
       res.status(200).json({
         success: true,
-        messagee: "user deleted successsfully",
+        message: "user deleted successsfully",
       });
     } catch (error: any) {
       return next(new ErrorHandle(error.message, 400));
