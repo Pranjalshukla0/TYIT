@@ -4,7 +4,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import {  errorMiddleware } from "./middleware/error";
-import userRouter from "./routes/user_route";
+import userRouter from "./routes/user.route";
 export const app = express();
 import courseRouter from "./routes/course.route";
 import orderRouter from "./routes/order.route";
@@ -25,6 +25,7 @@ app.use(cors({
 //routes
 app.use("/api/v1",userRouter,orderRouter,courseRouter,notificationRoute,analyticsRouter,LayoutRouter);
 //app.use("/api/v1",courseRouter);
+
 
 // Testing API
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {

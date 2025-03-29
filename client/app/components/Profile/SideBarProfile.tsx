@@ -1,5 +1,5 @@
-import React, { FC } from "react";
 import Image from "next/image";
+import React, { FC } from "react";
 import avatarDefault from "../../../public/assets/avatar.png";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { SiCoursera } from "react-icons/si";
@@ -15,17 +15,18 @@ type Props = {
   logOutHandler: any;
 };
 
-const SidesBarProfile: FC<Props> = ({
+const SideBarProfile: FC<Props> = ({
   user,
   active,
   avatar,
   setActive,
   logOutHandler,
 }) => {
+  console.log('this is the role',user)
   return (
     <div className="w-full">
       <div
-        className={`flex items-center px-3 py-4 cursor-pointer ${
+        className={`w-full flex items-center px-3 py-4 cursor-pointer ${
           active === 1 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
         }`}
         onClick={() => setActive(1)}
@@ -34,7 +35,7 @@ const SidesBarProfile: FC<Props> = ({
           src={
             user.avatar || avatar ? user.avatar.url || avatar : avatarDefault
           }
-          alt="" // Provide a meaningful alt text
+          alt=""
           width={20}
           height={20}
           className="w-[20px] h-[20px] 800px:w-[30px] 800px:h-[30px] cursor-pointer rounded-full"
@@ -49,61 +50,42 @@ const SidesBarProfile: FC<Props> = ({
         }`}
         onClick={() => setActive(2)}
       >
-        <RiLockPasswordLine
-          className="fill-black dark:fill-white"
-          size={20}
-          fill="#fff"
-        />
+        <RiLockPasswordLine size={20} className="dark:text-white text-black"  />
         <h5 className="pl-2 800px:block hidden font-Poppins dark:text-white text-black">
           Change Password
         </h5>
       </div>
-
       <div
         className={`w-full flex items-center px-3 py-4 cursor-pointer ${
           active === 3 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
         }`}
         onClick={() => setActive(3)}
       >
-        <SiCoursera
-          className="fill-black dark:fill-white"
-          size={20}
-          fill="#fff"
-        />
+        <SiCoursera size={20} className="dark:text-white text-black"  />
         <h5 className="pl-2 800px:block hidden font-Poppins dark:text-white text-black">
           Enrolled Courses
         </h5>
       </div>
-      {user?.role === "admin" && (
+      {user.role === "admin" && (
         <Link
-          href="/admin"
           className={`w-full flex items-center px-3 py-4 cursor-pointer ${
-            active === 5 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
+            active === 6 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
           }`}
-          onClick={() => setActive(5)} // Ensure active state updates for highlighting
+          href={"/admin"}
         >
-          <MdOutlineAdminPanelSettings
-            className="fill-black dark:fill-white"
-            size={20}
-            fill="#fff"
-          />
+          <MdOutlineAdminPanelSettings size={20} className="dark:text-white text-black"  />
           <h5 className="pl-2 800px:block hidden font-Poppins dark:text-white text-black">
             Admin Dashboard
           </h5>
         </Link>
       )}
-
       <div
         className={`w-full flex items-center px-3 py-4 cursor-pointer ${
           active === 4 ? "dark:bg-slate-800 bg-white" : "bg-transparent"
         }`}
         onClick={() => logOutHandler()}
       >
-        <AiOutlineLogout
-          className="fill-black dark:fill-white"
-          size={20}
-          fill="#fff"
-        />
+        <AiOutlineLogout size={20} className="dark:text-white text-black" />
         <h5 className="pl-2 800px:block hidden font-Poppins dark:text-white text-black">
           Log Out
         </h5>
@@ -112,4 +94,4 @@ const SidesBarProfile: FC<Props> = ({
   );
 };
 
-export default SidesBarProfile;
+export default SideBarProfile;

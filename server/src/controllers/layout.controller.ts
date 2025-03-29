@@ -1,164 +1,162 @@
 import { Request, Response, NextFunction } from "express";
-import LayoutModel from "../models/layout.model";
-import ErrorHandle from "../utils/ErrorHandle";
+import ErrorHandler from "../utils/ErrorHandle";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
+import LayoutModel from "../models/layout.model";
 import cloudinary from "cloudinary";
 
-// Controller to create a new Layout
+// create layout
 export const createLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { type } = req.body;
-
-      // Check if layout type already exists
       const isTypeExist = await LayoutModel.findOne({ type });
       if (isTypeExist) {
-        return next(new ErrorHandle(`${type} already exists`, 400));
+        return next(new ErrorHandler(`${type} already exist`, 400));
       }
-
-      // Define layout data based on type
-      let layoutData: {
-        type: string;
-        banner?: any;
-        faq?: any;
-        categories?: any;
-      } = { type };
-
       if (type === "Banner") {
         const { image, title, subTitle } = req.body;
-        if (!image || !title || !subTitle) {
-          return next(
-            new ErrorHandle("Banner requires image, title, and subTitle", 400)
-          );
-        }
-
-        // Upload image to cloudinary
         const myCloud = await cloudinary.v2.uploader.upload(image, {
-          folder: "Layout",
+          folder: "layout",
         });
-
-        layoutData.banner = {
-          image: {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
+        const banner = {
+          type: "Banner",
+          banner: {
+            image: {
+              public_id: myCloud.public_id,
+              url: myCloud.secure_url,
+            },
+            title,
+            subTitle,
           },
-          title,
-          subTitle,
         };
-      } else if (type === "FAQ") {
-        const { faq } = req.body;
-        if (!faq) return next(new ErrorHandle("FAQ content is required", 400));
-        layoutData.faq = faq || [];
-      } else if (type === "Categories") {
-        const { categories } = req.body;
-        if (!categories)
-          return next(new ErrorHandle("Categories content is required", 400));
-        layoutData.categories = categories || [];
-      } else {
-        return next(new ErrorHandle("Invalid layout type", 400));
+        await LayoutModel.create(banner);
       }
-
-      // Create layout document in database
-      const layout = await LayoutModel.create(layoutData);
+      if (type === "FAQ") {
+        const { faq } = req.body;
+        const faqItems = await Promise.all(
+          faq.map(async (item: any) => {
+            return {
+              question: item.question,
+              answer: item.answer,
+            };
+          })
+        );
+        await LayoutModel.create({ type: "FAQ", faq: faqItems });
+      }
+      if (type === "Categories") {
+        const { categories } = req.body;
+        const categoriesItems = await Promise.all(
+          categories.map(async (item: any) => {
+            return {
+              title: item.title,
+            };
+          })
+        );
+        await LayoutModel.create({
+          type: "Categories",
+          categories: categoriesItems,
+        });
+      }
 
       res.status(200).json({
         success: true,
         message: "Layout created successfully",
-        data: layout,
       });
     } catch (error: any) {
-      return next(new ErrorHandle(error.message, 500));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
-// EDIT layout
+
+// Edit layout
 export const editLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
       const { type } = req.body;
-
-      // Find the layout by ID
-      const layout = await LayoutModel.findById(id);
-      if (!layout) {
-        return next(new ErrorHandle("Layout not found", 404));
-      }
-
-      // Update layout data based on type
       if (type === "Banner") {
+        const bannerData: any = await LayoutModel.findOne({ type: "Banner" });
+
         const { image, title, subTitle } = req.body;
-        if (!title || !subTitle) {
-          return next(
-            new ErrorHandle("Banner requires title and subTitle", 400)
-          );
-        }
 
-        // Update image if provided
-        if (image) {
-          // Remove the old image from Cloudinary
-          if (layout.banner?.image?.public_id) {
-            await cloudinary.v2.uploader.destroy(layout.banner.image.public_id);
-          }
-          // Upload new image
-          const myCloud = await cloudinary.v2.uploader.upload(image, {
-            folder: "Layout",
-          });
-          layout.banner.image = {
-            public_id: myCloud.public_id,
-            url: myCloud.secure_url,
-          };
-        }
+        const data = image.startsWith("https")
+          ? bannerData
+          : await cloudinary.v2.uploader.upload(image, {
+              folder: "layout",
+            });
 
-        layout.banner.title = title;
-        layout.banner.subTitle = subTitle;
-      } else if (type === "FAQ") {
-        const { faq } = req.body;
-        if (!faq) return next(new ErrorHandle("FAQ content is required", 400));
-        layout.faq = faq;
-      } else if (type === "Categories") {
-        const { categories } = req.body;
-        if (!categories)
-          return next(new ErrorHandle("Categories content is required", 400));
-        layout.categories = categories;
-      } else {
-        return next(new ErrorHandle("Invalid layout type", 400));
+        const banner = {
+          type: "Banner",
+          image: {
+            public_id: image.startsWith("https")
+              ? bannerData.banner.image.public_id
+              : data?.public_id,
+            url: image.startsWith("https")
+              ? bannerData.banner.image.url
+              : data?.secure_url,
+          },
+          title,
+          subTitle,
+        };
+
+        await LayoutModel.findByIdAndUpdate(bannerData._id, { banner });
       }
 
-      // Save updated layout
-      await layout.save();
+      if (type === "FAQ") {
+        const { faq } = req.body;
+        const FaqItem = await LayoutModel.findOne({ type: "FAQ" });
+        const faqItems = await Promise.all(
+          faq.map(async (item: any) => {
+            return {
+              question: item.question,
+              answer: item.answer,
+            };
+          })
+        );
+        await LayoutModel.findByIdAndUpdate(FaqItem?._id, {
+          type: "FAQ",
+          faq: faqItems,
+        });
+      }
+      if (type === "Categories") {
+        const { categories } = req.body;
+        const categoriesData = await LayoutModel.findOne({
+          type: "Categories",
+        });
+        const categoriesItems = await Promise.all(
+          categories.map(async (item: any) => {
+            return {
+              title: item.title,
+            };
+          })
+        );
+        await LayoutModel.findByIdAndUpdate(categoriesData?._id, {
+          type: "Categories",
+          categories: categoriesItems,
+        });
+      }
 
       res.status(200).json({
         success: true,
-        message: "Layout updated successfully",
-        data: layout,
+        message: "Layout Updated successfully",
       });
     } catch (error: any) {
-      next(new ErrorHandle(error.message, 500));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );
 
-// get layout by Id
-
+// get layout by type
 export const getLayoutByType = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { type } = req.body;
-
+      const { type } = req.params;
       const layout = await LayoutModel.findOne({ type });
-
-      if (!layout) {
-        return next(
-          new ErrorHandle(`Layout with type '${type}' not found`, 404)
-        );
-      }
-
-      res.status(200).json({
+      res.status(201).json({
         success: true,
         layout,
       });
     } catch (error: any) {
-      return next(new ErrorHandle(error.message, 500));
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );

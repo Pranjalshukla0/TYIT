@@ -1,56 +1,36 @@
 import { Response } from "express";
-import userModel from "../models/user.model";
 import { redis } from "../utils/redis";
+import userModel from "../models/user.model";
 
+// get user by id
 export const getUserById = async (id: string, res: Response) => {
-  try {
-    const userJson = await redis.get(id);
+  const userJson = await redis.get(id);
 
-    if (userJson) {
-      const user = JSON.parse(userJson);
-
-      return res.status(200).json({
-        success: true,
-        user,
-      });
-    }
-
-    const userFromDb = await userModel.findById(id);
-
-    if (!userFromDb) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    await redis.set(id, JSON.stringify(userFromDb));
-
-    return res.status(200).json({
+  if (userJson) {
+    const user = JSON.parse(userJson);
+    res.status(201).json({
       success: true,
-      user: userFromDb,
-    });
-  } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
+      user,
     });
   }
 };
 
-// get all users
-export const getAllUsersService =async (res:Response)=>{
-  const users = await userModel.find().sort({createdAt:-1});
-  res.status(201).json({
-    success:true,
-    users
-  })
-}
+// Get All users
+export const getAllUsersService = async (res: Response) => {
+  const users = await userModel.find().sort({ createdAt: -1 });
 
-export const updateUserRoleService =async (res:Response,id:string,role:string)=>{
-  const user = await userModel.findByIdAndUpdate(id,{role},{new:true});
   res.status(201).json({
-    success:true,
+    success: true,
+    users,
+  });
+};
+
+// update user role
+export const updateUserRoleService = async (res:Response,id: string,role:string) => {
+  const user = await userModel.findByIdAndUpdate(id, { role }, { new: true });
+
+  res.status(201).json({
+    success: true,
     user,
-  })
+  });
 }

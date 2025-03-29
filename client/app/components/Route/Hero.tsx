@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { FC } from "react";
 import { BiSearch } from "react-icons/bi";
-import Client1 from "../../../public/assets/client-1.png";
-import Client2 from "../../../public/assets/client-2.png";
-import Client3 from "../../../public/assets/client-3.png";
-import Banner from "../../../public/assets/banner.png";
+// import Client1 from "../../../public/assets/client-1.png";
+// import Client2 from "../../../public/assets/client-2.png";
+// import Client3 from "../../../public/assets/client-3.png";
+// import Banner from "../../../public/assets/banner.png";
 
 type Props = {};
 
@@ -16,8 +16,10 @@ const Hero: FC<Props> = () => {
       <div className="flex justify-center lg:justify-start w-full lg:w-1/2 relative mt-8 lg:mt-0">
         <div className="h-[50vh] w-[50vh] lg:h-[200px] lg:w-[200px] xl:h-[500px] xl:w-[500px] hero_animation rounded-full">
         <Image
-            src={Banner}
+            src="/assets/banner.png"
             alt="banner"
+            width={50}
+            height={50}
             className="object-contain 1100px:max-w-[90%] w-[90%] 1500px:max-w-[85%] h-[auto] z-10"
           />
 
@@ -51,22 +53,28 @@ const Hero: FC<Props> = () => {
         <div className="flex items-center justify-center lg:justify-start gap-4 mt-8 relative">
           <div className="relative">
             <Image
-              src={Client1}
+              src="/assets/client-1.png"
               alt="Client 1"
+              width={50}
+              height={50}
               className="w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] rounded-full z-30"
             />
           </div>
           <div className="relative -ml-3 sm:-ml-5">
             <Image
-              src={Client2}
+              src="/assets/client-2.png"
               alt="Client 2"
+              width={50}
+              height={50}
               className="w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] rounded-full z-20"
             />
           </div>
           <div className="relative -ml-3 sm:-ml-5">
             <Image
-              src={Client3}
+              src="/assets/client-3.png"
               alt="Client 3"
+              width={50}
+              height={50}
               className="w-[40px] h-[40px] sm:w-[50px] sm:h-[50px] rounded-full z-10"
             />
           </div>

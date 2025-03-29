@@ -11,22 +11,55 @@ export const userApi = apiSlice.injectEndpoints({
       }),
     }),
     editProfile: builder.mutation({
-        query: ({name}) => ({
-          url: "update-user-Info",
-          method: "PUT",
-          body: { name},
-          credentials: "include" as const,
-        }),
+      query: ({ name }) => ({
+        url: "update-user-Info",
+        method: "PUT",
+        body: { name },
+        credentials: "include" as const,
       }),
-      updatePassword: builder.mutation({
-        query: ({oldPassword,newPassword}) => ({
-          url: "update-user-password",
-          method: "PUT",
-          body: { oldPassword,newPassword},
-          credentials: "include" as const,
-        }),
+    }),
+    updatePassword: builder.mutation({
+      query: ({ oldPassword, newPassword }) => ({
+        url: "update-user-password",
+        method: "PUT",
+        body: { oldPassword, newPassword },
+        credentials: "include" as const,
       }),
+    }),
+
+    
+    getAllUsers: builder.query({
+      query: () => ({
+        url: "get-users",
+        method: "GET",
+        credentials: "include" as const,
+       
+      }),
+    }),
+
+    updateUserRole: builder.mutation({
+      query: ({ userId, role }) => ({
+        url: `update-user/${userId}`,
+        method: "PUT",
+        body: { role },
+        credentials: "include" as const,
+      }),
+    }),
+    deleteUser: builder.mutation({
+      query: (userId: string) => ({
+        url: `delete-user/${userId}`,
+        method: "DELETE",
+        credentials: "include" as const,
+      }),
+    }),
   }),
-  overrideExisting: true,
+
 });
-export const { useUpdateAvatarMutation,useEditProfileMutation, useUpdatePasswordMutation } = userApi;
+export const {
+  useUpdateAvatarMutation,
+  useEditProfileMutation,
+  useUpdatePasswordMutation,
+  useGetAllUsersQuery,
+  useUpdateUserRoleMutation,
+ useDeleteUserMutation
+} = userApi;

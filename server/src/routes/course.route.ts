@@ -1,22 +1,21 @@
 import express from "express";
 import {
-  addAnswer,
+  addAnwser,
   addQuestion,
   addReplyToReview,
   addReview,
   deleteCourse,
   editCourse,
-  getAllCourse,
+  generateVideoUrl,
+  getAdminAllCourses,
   getAllCourses,
   getCourseByUser,
   getSingleCourse,
   uploadCourse,
 } from "../controllers/course.controller";
 import { authorizeRoles, IsAuthenticated } from "../middleware/auth";
-
 const courseRouter = express.Router();
 
-// Create course
 courseRouter.post(
   "/create-course",
   IsAuthenticated,
@@ -24,7 +23,6 @@ courseRouter.post(
   uploadCourse
 );
 
-// Edit course
 courseRouter.put(
   "/edit-course/:id",
   IsAuthenticated,
@@ -32,60 +30,39 @@ courseRouter.put(
   editCourse
 );
 
-// Get single course
 courseRouter.get("/get-course/:id", getSingleCourse);
 
-// Get all courses
-courseRouter.get("/get-courses", getAllCourse);
+courseRouter.get("/get-courses", getAllCourses);
 
-// Get course content for a user
 courseRouter.get(
-  "/get-course-content/:id", 
+  "/get-admin-courses",
   IsAuthenticated,
-  getCourseByUser
+  authorizeRoles("admin"),
+  getAdminAllCourses
 );
 
-// Add a question
-courseRouter.put(
-  "/add-question", 
-  IsAuthenticated,
-  addQuestion
-);
+courseRouter.get("/get-course-content/:id", IsAuthenticated, getCourseByUser);
 
-// Add an answer
-courseRouter.put(
-  "/add-answer", 
-  IsAuthenticated,
-  addAnswer
-);
+courseRouter.put("/add-question", IsAuthenticated, addQuestion);
 
-// Add a review
-courseRouter.put(
-  "/add-review/:id", 
-  IsAuthenticated,
-  addReview
-);
+courseRouter.put("/add-answer", IsAuthenticated, addAnwser);
 
-// Add a reply to a review
+courseRouter.put("/add-review/:id", IsAuthenticated, addReview);
+
 courseRouter.put(
-  "/add-reply", 
+  "/add-reply",
   IsAuthenticated,
   authorizeRoles("admin"),
   addReplyToReview
 );
 
-// Get all courses for admin
-courseRouter.get(
-  "/get-courses-admin", 
-  IsAuthenticated,
-  authorizeRoles("admin"),
-  getAllCourses
-);
+courseRouter.post("/getVdoCipherOTP", generateVideoUrl, IsAuthenticated);
 
 courseRouter.delete(
-  "/delete-course/:id", 
+  "/delete-course/:id",
   IsAuthenticated,
   authorizeRoles("admin"),
   deleteCourse
 );
+
 export default courseRouter;

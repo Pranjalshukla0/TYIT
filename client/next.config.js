@@ -1,9 +1,28 @@
-
-{import ('next').nextConfig}
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  images:{
-    domains:["res.cloudinary.com"],
-  },
-};
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'randomuser.me',
+            },
+            {
+                protocol: 'https',
+                hostname: 'example.com', // Add example.com here
+            },
+        ],
 
-module.exports= nextConfig;
+    },
+    i18n: {
+        locales: ["en", "hi", "mr"], // Supported languages
+        defaultLocale: "en", // Default language
+      },
+    experimental: {},
+  };
+  
+  module.exports = nextConfig;
+  

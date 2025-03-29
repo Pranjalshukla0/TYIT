@@ -2,10 +2,15 @@
 import React, { FC, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiFillGithub,
+} from "react-icons/ai";
+import { FcGoogle } from "react-icons/fc";
 import { styles } from "../../../app/styles/style";
 import { useRegisterMutation } from "@/redux/features/auth/authApi";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 type Props = {
   setRoute: (route: string) => void;
@@ -16,143 +21,138 @@ const schema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email!")
     .required("Please enter your email!"),
-  password: Yup.string()
-    .required("Please enter your password!")
-    .min(6, "Password must be at least 6 characters"),
+  password: Yup.string().required("Please enter your password!").min(6),
 });
 
-const SignUp: FC<Props> = ({ setRoute }) => {
+const Signup: FC<Props> = ({ setRoute }) => {
   const [show, setShow] = useState(false);
-  const [register, { data, error, isSuccess }] = useRegisterMutation();
+  const [register,{data,error,isSuccess}] = useRegisterMutation(); 
 
   useEffect(() => {
-    if (isSuccess) {
+   if(isSuccess){
       const message = data?.message || "Registration successful";
       toast.success(message);
       setRoute("Verification");
+   }
+   if(error){
+    if("data" in error){
+      const errorData = error as any;
+      toast.error(errorData.data.message);
     }
-
-    if (error && typeof error === "object" && "data" in error) {
-      const errorData = error as { data: { message: string } };
-
-      // Show a specific message for existing email
-      if (errorData.data.message.includes("Email already exists")) {
-        toast.error("This email is already registered. Please use a different email.");
-      } else {
-        toast.error(errorData.data.message);
-      }
-    } else if (error) {
-      console.error("An unexpected error occurred:", error);
-    }
-  }, [isSuccess, error, setRoute]);
+   }
+  }, [isSuccess,error]);
+  
 
   const formik = useFormik({
-    initialValues: { name: "", username: "", email: "", password: "" },
-    validationSchema: schema, 
-    onSubmit: async (values) => {
-      const payload = {
-        username: values.name, 
-        email: values.email,
-        password: values.password,
+    initialValues: { name: "", email: "", password: "" },
+    validationSchema: schema,
+    onSubmit: async ({name, email, password }) => {
+      const data = {
+        username: name,
+        name,email,password
       };
-      await register(payload);
+      await register(data);
     },
   });
-  
 
   const { errors, touched, values, handleChange, handleSubmit } = formik;
 
   return (
-    <div className="w-full flex flex-col items-center max-w-md mx-auto">
-      <h1 className={styles.title}>Join KnowledgeHub</h1>
-      <form onSubmit={handleSubmit} className="w-full">
+    <div className="w-full">
+      <h1 className={`${styles.title}`}>Join to KnowledgeHub</h1>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className={styles.label} htmlFor="name">
-            Enter your Name:
+          <label className={`${styles.label}`} htmlFor="email">
+            Enter your Name
           </label>
           <input
             type="text"
-            name="name"
+            name=""
             value={values.name}
             onChange={handleChange}
             id="name"
-            placeholder="e.g., John Doe"
-            className={`${
-              errors.name && touched.name ? "border-red-500" : ""
-            } ${styles.input}`}
-            aria-label="Enter your name"
+            placeholder="pranjal"
+            className={`${errors.name && touched.name && "border-red-500"} ${
+              styles.input
+            }`}
           />
           {errors.name && touched.name && (
-            <span className="text-red-500 text-sm mt-1 block">{errors.name}</span>
+            <span className="text-red-500 pt-2 block">{errors.name}</span>
           )}
         </div>
-
-        <div className="mb-4">
-          <label className={styles.label} htmlFor="email">
-            Enter your Email:
+        <label className={`${styles.label}`} htmlFor="email">
+          Enter your Email
+        </label>
+        <input
+          type="email"
+          name=""
+          value={values.email}
+          onChange={handleChange}
+          id="email"
+          placeholder="loginmail@gmail.com"
+          className={`${errors.email && touched.email && "border-red-500"} ${
+            styles.input
+          }`}
+        />
+        {errors.email && touched.email && (
+          <span className="text-red-500 pt-2 block">{errors.email}</span>
+        )}
+        <div className="w-full mt-5 relative mb-1">
+          <label className={`${styles.label}`} htmlFor="email">
+            Enter your password
           </label>
           <input
-            type="email"
-            name="email"
-            value={values.email}
-            onChange={handleChange}
-            id="email"
-            placeholder="example@mail.com"
-            className={`${
-              errors.email && touched.email ? "border-red-500" : ""
-            } ${styles.input}`}
-            aria-label="Enter your email"
-          />
-          {errors.email && touched.email && (
-            <span className="text-red-500 text-sm mt-1 block">{errors.email}</span>
-          )}
-        </div>
-
-        <div className="mb-4 relative">
-          <label className={styles.label} htmlFor="password">
-            Enter your Password:
-          </label>
-          <input
-            type={show ? "text" : "password"}
+            type={!show ? "password" : "text"}
             name="password"
             value={values.password}
             onChange={handleChange}
             id="password"
-            placeholder="Password"
+            placeholder="password!@%"
             className={`${
-              errors.password && touched.password ? "border-red-500" : ""
+              errors.password && touched.password && "border-red-500"
             } ${styles.input}`}
-            aria-label="Enter your password"
           />
-          <button
-            type="button"
-            className="absolute right-2 top-10 text-gray-500"
-            onClick={() => setShow(!show)}
-            aria-label="Toggle password visibility"
-          >
-            {show ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
-          </button>
-          {errors.password && touched.password && (
-            <span className="text-red-500 text-sm mt-1 block">{errors.password}</span>
+          {!show ? (
+            <AiOutlineEyeInvisible
+              className="absolute bottom-3 right-2 z-1 cursor-pointer"
+              size={20}
+              onClick={() => setShow(true)}
+            />
+          ) : (
+            <AiOutlineEye
+              className="absolute bottom-3 right-2 z-1 cursor-pointer"
+              size={20}
+              onClick={() => setShow(false)}
+            />
           )}
         </div>
-
-        <button type="submit" className={styles.button}>
-          Sign Up
-        </button>
-
-        <h5 className="text-center text-sm text-black dark:text-white mt-4">
+        {errors.password && touched.password && (
+          <span className="text-red-500 pt-2 block">{errors.password}</span>
+        )}
+        <div className="w-full mt-5">
+          <input type="submit" value="Sign Up" className={`${styles.button}`} />
+        </div>
+        <br />
+        <h5 className="text-center pt-4 font-Poppins text-[14px] dark:text-white text-black">
+          Or join with
+        </h5>
+        <div className="flex items-center justify-center my-3">
+          <FcGoogle size={30} className="cursor-pointer mr-2" />
+          <AiFillGithub size={30} className="cursor-pointer ml-2 dark:text-white text-black" />
+        </div>
+        <h5 className="text-center pt-4 font-Poppins text-[14px] dark:text-white text-black">
           Already have an account?{" "}
           <span
-            className="text-blue-500 cursor-pointer"
+            className="text-[#2190ff] pl-1 cursor-pointer"
             onClick={() => setRoute("Login")}
           >
             Sign in
           </span>
         </h5>
       </form>
+      <br />
     </div>
   );
 };
 
-export default SignUp;
+export default Signup;
